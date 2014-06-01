@@ -32,7 +32,11 @@ var assert = require('assert')
 //tape('many', function (t) {
 //
 
-async.test(function (async) {
+//async.test(strange, function (err, results, stats) {
+//    console.log(results)
+//  })
+//
+function strange (async) {
 
     function p (read) {
       return function (abort, cb) {
@@ -48,6 +52,14 @@ async.test(function (async) {
         pull.values([1,3,5,7]),
         pull.values([2,4,6,8])
       ].map(p)),
+      function (read) {
+        return function (abort, cb) {
+          read(abort, function (end, data) {
+            console.log(end, data)
+            cb(end, data)
+          })
+        }
+      },
       pull.collect(function (err, ary) {
         console.log(ary)
         var odd  = ary.filter(function (e) { return e % 2 })
@@ -59,12 +71,8 @@ async.test(function (async) {
       })
     )
 
-  }, function (err, results, stats) {
-    console.log(results)
-//    assert.equal(stats.passes, 100)
-  //  t.end()
-  })
+  }
 
-//})
 
+strange(async(95, console.error))
 

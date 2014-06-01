@@ -46,6 +46,7 @@ var create = module.exports = function (seed, cb) {
       var args = [].slice.call(arguments)
       var self = this
       function _cb () {
+        console.log(args)
         return cb.apply(self, args)
       }
 
@@ -69,7 +70,6 @@ var create = module.exports = function (seed, cb) {
   process.on('exit', forgot)
 
   function forgot () {
-    console.log('FODGAT', seed)
     async.done(new Error('never called'))
   }
 
