@@ -32,10 +32,12 @@ var assert = require('assert')
 //tape('many', function (t) {
 //
 
-//async.test(strange, function (err, results, stats) {
-//    console.log(results)
-//  })
-//
+async.test(strange, function (err, results, stats) {
+    console.log(results)
+    assert.equal(stats.failures, 0)
+    console.log('passed')
+  })
+
 function strange (async) {
 
     function p (read) {
@@ -74,5 +76,5 @@ function strange (async) {
   }
 
 
-strange(async(95, console.error))
+//strange(async(95, console.error))
 
