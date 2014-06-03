@@ -89,9 +89,9 @@ so you will still test interleavings where sync calls happen.
 
 set the number of times to try different interleavings for each test.
 
-### TODO: INTLVS=seed
+### INTLVS=seed
 
-run each test only once - with the given seed.
+run the test only once - with the given seed.
 
 ## License
 
