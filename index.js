@@ -67,6 +67,14 @@ var create = module.exports = function (seed, cb) {
     }
   }
 
+  async.through = function () {
+    return function (read) {
+      return function (abort, cb) {
+        read(abort, async(cb))
+      }
+    }
+  }
+
   process.on('exit', forgot)
 
   function forgot () {
@@ -92,7 +100,8 @@ var create = module.exports = function (seed, cb) {
       seed: seed
     }
 
-    cb(null, result)
+    if(cb) cb(null, result)
+    else if(err) throw err
   }
 
   return async
@@ -104,7 +113,8 @@ create.test = function (test, cb) {
   for( var i = 0; i < total; i++)
     (function (i) {
 
-      var async = create(i, function (_, result) {
+      var async = create(i, function (err, result) {
+        if(err) result.error = err
         results[i] = result
         done()
       })
@@ -121,6 +131,12 @@ create.test = function (test, cb) {
       failures: 0,
       errors: 0
     }
+    var err = null
+
+    if(stats.failures)
+      err = new Error(
+          'failed ' + stats.failures
+        + ' out of ' + stats.total)
 
     results.forEach(function (e) {
       if((!e.error) && e.calls === 1)
@@ -131,7 +147,9 @@ create.test = function (test, cb) {
         stats.errors ++
     })
 
-    cb(null, results, stats)
+    if(cb) cb(err, results, stats)
+    else if(err) throw err
+    else console.log(stats)
   }
 }
 
