@@ -14,7 +14,8 @@
     "deep-equal": "~0.2.1",
     "pull-stream": "~2.23.0",
     "tape": "~2.13.1",
-    "pull-merge": "~1.0.1"
+    "pull-merge": "~1.0.1",
+    "pull-many": "~1.0.2"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
