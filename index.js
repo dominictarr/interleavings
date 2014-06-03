@@ -109,18 +109,31 @@ var create = module.exports = function (seed, cb) {
 }
 
 create.test = function (test, cb) {
+  function run (seed, cb) {
+    var async = create(seed, cb)
+    test(async)
+  }
+
+  var seed = +process.env.INTLVS
+  if(seed) {
+    return run(seed, function (err, result) {
+      if(cb) return cb(err, result)
+      else if(err) throw err
+      else console.log(result || 'passed')
+    })
+  }
+
+
   var total = process.env.INTLVR || 100
   var n = total, results = []
   for( var i = 0; i < total; i++)
     (function (i) {
 
-      var async = create(i, function (err, result) {
+      run(i, function (err, result) {
         if(err) result.error = err
         results[i] = result
         done()
       })
-
-      test(async)
 
     })(i)
 
