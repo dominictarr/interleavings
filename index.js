@@ -46,7 +46,6 @@ var create = module.exports = function (seed, cb) {
       var args = [].slice.call(arguments)
       var self = this
       function _cb () {
-        console.log(args)
         return cb.apply(self, args)
       }
 
@@ -110,7 +109,7 @@ var create = module.exports = function (seed, cb) {
 }
 
 create.test = function (test, cb) {
-  var total = 100
+  var total = process.env.INTLVR || 100
   var n = total, results = []
   for( var i = 0; i < total; i++)
     (function (i) {
