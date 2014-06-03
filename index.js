@@ -115,7 +115,7 @@ create.test = function (test, cb) {
   }
 
   var seed = +process.env.INTLVS
-  if(seed) {
+  if('number' === typeof typeof seed) {
     return run(seed, function (err, result) {
       if(cb) return cb(err, result)
       else if(err) throw err
@@ -126,6 +126,7 @@ create.test = function (test, cb) {
 
   var total = process.env.INTLVR || 100
   var n = total, results = []
+
   for( var i = 0; i < total; i++)
     (function (i) {
 
@@ -145,22 +146,29 @@ create.test = function (test, cb) {
       failures: 0,
       errors: 0
     }
-    var err = null
+    var err = null, seed
 
     results.forEach(function (e) {
       if((!e.error) && e.calls === 1)
         stats.passes ++
-      else
+      else {
+        if(seed == null) seed = e.seed
+        if(err == null)  err = e.error
         stats.failures ++
+      }
       if(e.calls > 1)
         stats.errors ++
     })
 
-    if(stats.failures)
-      err = new Error(
-          'failed ' + stats.failures
-        + ' out of ' + stats.total)
+    if(stats.failures) {
+      var message =
+        '(interleavings: failed ' + stats.failures
+      + ' out of ' + stats.total
+      + ', first failing seed: ' + seed + ')'
 
+      if(!err) err = new Error(message)
+      err.message = err.message + '\n  ' + message
+    }
     if(cb) cb(err, results, stats)
     else if(err) throw err
     else console.log(stats)
