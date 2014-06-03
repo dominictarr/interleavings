@@ -76,6 +76,7 @@ var create = module.exports = function (seed, cb) {
   }
 
   process.on('exit', forgot)
+  process.setMaxListeners(Infinity)
 
   function forgot () {
     async.done(new Error('never called'))
@@ -87,6 +88,7 @@ var create = module.exports = function (seed, cb) {
     if(result) {
       result.passed = false
       result.calls ++
+      result.error = result.error || new Error('called done twice')
       return
     }
 
@@ -100,7 +102,7 @@ var create = module.exports = function (seed, cb) {
       seed: seed
     }
 
-    if(cb) cb(null, result)
+    if(cb) cb(err, result)
     else if(err) throw err
   }
 
@@ -133,11 +135,6 @@ create.test = function (test, cb) {
     }
     var err = null
 
-    if(stats.failures)
-      err = new Error(
-          'failed ' + stats.failures
-        + ' out of ' + stats.total)
-
     results.forEach(function (e) {
       if((!e.error) && e.calls === 1)
         stats.passes ++
@@ -146,6 +143,11 @@ create.test = function (test, cb) {
       if(e.calls > 1)
         stats.errors ++
     })
+
+    if(stats.failures)
+      err = new Error(
+          'failed ' + stats.failures
+        + ' out of ' + stats.total)
 
     if(cb) cb(err, results, stats)
     else if(err) throw err
