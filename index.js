@@ -41,8 +41,10 @@ var create = module.exports = function (seed, cb) {
     }
   }
 
-  function async (cb) {
-    var err = new Error('cb was not called\n  created at:')
+  function async (cb, err) {
+    var m = 'cb was not called\n  created at:'
+    err = err || new Error(m)
+    err.message = m
     not_called.push(err)
     return function () {
       var args = [].slice.call(arguments)
@@ -71,9 +73,10 @@ var create = module.exports = function (seed, cb) {
   }
 
   async.through = function () {
+    var err = new Error()
     return function (read) {
       return function (abort, cb) {
-        read(abort, async(cb))
+        read(abort, async(cb, err))
       }
     }
   }
