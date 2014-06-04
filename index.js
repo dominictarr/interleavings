@@ -116,7 +116,7 @@ create.test = function (test, cb) {
   }
 
   var seed = +process.env.INTLVS
-  if('number' === typeof seed) {
+  if(!isNaN(seed)) {
     return run(seed, function (err, result) {
       if(cb) return cb(err, result)
       else if(err) {
