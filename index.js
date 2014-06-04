@@ -45,6 +45,7 @@ var create = module.exports = function (seed, cb) {
     return function () {
       var args = [].slice.call(arguments)
       var self = this
+      var called = false
       function _cb () {
         return cb.apply(self, args)
       }
@@ -128,7 +129,6 @@ create.test = function (test, cb) {
     })
   }
 
-
   var total = process.env.INTLVR || 100
   var n = total, results = []
 
@@ -154,6 +154,9 @@ create.test = function (test, cb) {
     }
     var err = null, seed
 
+    //collect the most common error messages
+    var messages = {}
+
     results.forEach(function (e) {
       if((!e.error) && e.calls === 1)
         stats.passes ++
@@ -161,10 +164,23 @@ create.test = function (test, cb) {
         if(seed == null) seed = e.seed
         if(err == null)  err = e.error
         stats.failures ++
+        if(!messages[err.message])
+          messages[err.message] = {error: err, count: 1}
+        else
+          messages[err.message].count ++
       }
       if(e.calls > 1)
         stats.errors ++
     })
+
+    var worst = Object.keys(messages)
+                .sort(function (a, b) {
+                  return messages[b].count - messages[a].count
+                }).slice(0, 5).map(function (key) {
+                  return messages[key]
+                })
+
+    console.log(worst)
 
     if(stats.failures) {
       var message =
