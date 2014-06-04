@@ -103,6 +103,7 @@ var create = module.exports = function (seed, cb) {
 
     if(cb) cb(err, result)
     else if(err) throw err
+    else console.log(result)
   }
 
   return async
@@ -115,10 +116,14 @@ create.test = function (test, cb) {
   }
 
   var seed = +process.env.INTLVS
-  if('number' === typeof typeof seed) {
+  if('number' === typeof seed) {
     return run(seed, function (err, result) {
       if(cb) return cb(err, result)
-      else if(err) throw err
+      else if(err) {
+        //DO NOT allow anything to swallow this error.
+        console.error(err.stack)
+        process.exit(1)
+      }
       else console.log(result || 'passed')
     })
   }
@@ -140,6 +145,7 @@ create.test = function (test, cb) {
 
   function done () {
     if(--n) return
+
     var stats = {
       passes: 0,
       total: results.length,
@@ -170,7 +176,11 @@ create.test = function (test, cb) {
       err.message = err.message + '\n  ' + message
     }
     if(cb) cb(err, results, stats)
-    else if(err) throw err
+    else if(err) {
+      //DO NOT allow anything to swallow this error.
+      console.error(err.stack)
+      process.exit(1)
+    }
     else console.log(stats)
   }
 }
