@@ -11,7 +11,7 @@ var create = module.exports = function (seed, cb) {
   var rng = new RNG.MT(seed)
   var l = 10000
 
-  var heap = []
+  var heap = [], not_called = []
   var result
   var ended
   var queued = false
@@ -42,11 +42,14 @@ var create = module.exports = function (seed, cb) {
   }
 
   function async (cb) {
+    var err = new Error('cb was not called\n  created at:')
+    not_called.push(err)
     return function () {
       var args = [].slice.call(arguments)
       var self = this
       var called = false
       function _cb () {
+        not_called.splice(not_called.indexOf(err), 1)
         return cb.apply(self, args)
       }
 
@@ -79,6 +82,9 @@ var create = module.exports = function (seed, cb) {
   process.setMaxListeners(Infinity)
 
   function forgot () {
+    not_called.forEach(function (err) {
+      console.error(err.stack)
+    })
     async.done(new Error('never called'))
   }
 
