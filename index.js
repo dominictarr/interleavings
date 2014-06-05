@@ -32,12 +32,10 @@ var create = module.exports = function (seed, cb) {
       delete heap[key]
       if(cb) {
         try { cb() }
-        catch (err) { return async.done(err) }
-      }
-      else return
-
-      setImmediate(next)
-
+        catch (err) { console.error(err); return async.done(err) }
+        setImmediate(next) 
+     }
+ 
     }
   }
 
