@@ -2,7 +2,6 @@
 
 var RNG = require('rng')
 var path = require('path')
-var infer = require('infer-partial-order')
 
 function first (o) {
   for(var k in o)
@@ -15,6 +14,8 @@ function chars(n, ch) {
     s += ch
   return s
 }
+
+//this part handles the callbacks and interleavings.
 
 var create = module.exports = function (seed, cb) {
   var rng = new RNG.MT(seed), all = {}, created = [], called = []
@@ -101,7 +102,7 @@ var create = module.exports = function (seed, cb) {
     name = name || new Error()
     return function (read) {
       return function (abort, cb) {
-        read(abort, async(cb, name))
+        async(read, name+':read')(abort, async(cb, name+':cb'))
       }
     }
   }
@@ -152,107 +153,7 @@ var create = module.exports = function (seed, cb) {
   return async
 }
 
-create.test = function (test, cb) {
-  function run (seed, cb) {
-    var async = create(seed, cb)
-    test(async)
-  }
-
-  var seed = +process.env.INTLVS
-  if(!isNaN(seed)) {
-    return run(seed, function (err, result) {
-      if(cb) return cb(err, result)
-      else if(err) {
-        //DO NOT allow anything to swallow this error.
-        console.error(err.stack)
-        process.exit(1)
-      }
-      else console.log(result || 'passed')
-    })
-  }
-
-  var total = process.env.INTLVR || 100
-  var n = total, results = []
-
-  for( var i = 0; i < total; i++)
-    (function (i) {
-
-      run(i, function (err, result) {
-        if(err) result.error = err
-        results[i] = result
-        done()
-      })
-
-    })(i)
-
-  function done () {
-    if(--n) return
-
-    var stats = {
-      passes: 0,
-      total: results.length,
-      failures: 0,
-      errors: 0
-    }
-    var err = null, seed
-
-    //collect the most common error messages
-    var messages = {}
-    var called = []
-
-    results.forEach(function (e) {
-      var error = e.error
-      if((!e.error) && e.calls === 1)
-        stats.passes ++
-      else {
-        if(seed == null) seed = e.seed
-        if(err == null)  err = e.error
-        stats.failures ++
-      }
-      var outcome = error ? error.message : 'passed'
-      if(!messages[outcome])
-        messages[outcome] = {error: err, count: 1, called: [e.called]}
-      else {
-        messages[outcome].count ++
-        messages[outcome].called.push(e.called)
-      }
-
-      if(e.calls > 1)
-        stats.errors ++
-    })
-
-    var outcomes = Object.keys(messages)
-                .sort(function (a, b) {
-                  return messages[b].count - messages[a].count
-                }).slice(0, 5)
-
-    var worstErrors = outcomes.map(function (key) {
-                return messages[key]
-              })
-
-    console.log(worstErrors)
-
-    console.log(infer(messages[outcomes[0]].called, true))
-
-    if(stats.failures) {
-      var message =
-        '(interleavings: failed ' + stats.failures
-      + ' out of ' + stats.total
-      + ', first failing seed: ' + seed + ')'
-
-      if(!err) err = new Error(message)
-      err.message = err.message + '\n  ' + message
-    }
-    if(cb) cb(err, results, stats)
-    else if(err) {
-      //DO NOT allow anything to swallow this error.
-      console.error(err.stack)
-      process.exit(1)
-    }
-    else console.log(stats)
-  }
-}
-
+create.test = require('./tester')
 
 if(!module.parent) {
 
