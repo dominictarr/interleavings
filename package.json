@@ -8,15 +8,15 @@
     "url": "git://github.com/dominictarr/interleavings.git"
   },
   "dependencies": {
-    "rng": "~0.2.2",
-    "infer-partial-order": "~0.1.1"
+    "infer-partial-order": "~0.1.1",
+    "rng": "~0.2.2"
   },
   "devDependencies": {
     "deep-equal": "~0.2.1",
-    "pull-stream": "~2.23.0",
-    "tape": "~2.13.1",
-    "pull-merge": "~1.0.1",
-    "pull-many": "~1.0.2"
+    "pull-many": "^1.0.6",
+    "pull-merge": "^1.0.2",
+    "pull-stream": "^3.3.0",
+    "tape": "~2.13.1"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
