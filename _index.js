@@ -1,3 +1,4 @@
+const debug = require('debug')('interleavings')
 'use strict';
 
 var RNG = require('rng')
@@ -29,7 +30,7 @@ function callSomething () {
     process.nextTick(function () {
       if(first(heap)) return
       dead = true
-      console.log('DRAIN!!!!', heap)
+      debug('DRAIN!!!!', heap)
       while(waiting.length)
         waiting.shift()()
     })

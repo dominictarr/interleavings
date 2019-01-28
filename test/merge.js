@@ -1,12 +1,13 @@
+const debug = require('debug')('interleavings')
 var async = require('../')
 var pull = require('pull-stream')
 var assert = require('assert')
 var merge = require('pull-merge')
 
 async.test(strange, function (err, results, stats) {
-    console.log(results)
+    debug(results)
     assert.equal(stats.failures, 0)
-    console.log('passed')
+    debug('passed')
   })
 
 function strange (async) {
@@ -29,13 +30,13 @@ function strange (async) {
       function (read) {
         return function (abort, cb) {
           read(abort, function (end, data) {
-            console.log(end, data)
+            debug(end, data)
             cb(end, data)
           })
         }
       },
       pull.collect(function (err, ary) {
-        console.log(ary)
+        debug(ary)
 
         assert.deepEqual(ary, [1,2,3,4,5,6,7,8,9,10,11,12])
         async.done()
@@ -46,5 +47,5 @@ function strange (async) {
 
 //strange(async(17, function (err, result) {
 //  if(result.error)
-//    console.log(result.error.stack)
+//    debug(result.error.stack)
 //}))

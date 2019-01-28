@@ -1,3 +1,4 @@
+const debug = require('debug')('interleavings')
 'use strict';
 
 var RNG = require('rng')
@@ -72,11 +73,11 @@ var create = module.exports = function (seed, cb) {
       var args = [].slice.call(arguments)
       var self = this
       pending ++
-      //console.log(chars(pending*2, '-')+'>', id)
+      //debug(chars(pending*2, '-')+'>', id)
       function _cb () {
         called.push(id)
         not_called.splice(not_called.indexOf(name), 1)
-        //console.log('<'+chars(pending*2, '-'), id)
+        //debug('<'+chars(pending*2, '-'), id)
         pending --
         return cb.apply(self, args)
       }
@@ -138,18 +139,16 @@ var create = module.exports = function (seed, cb) {
       called: called
     }
 
-    if (process.env.DEBUG) {
-      console.log('created from: count')
-      console.log(all)
-      console.log('created order:')
-      console.log(created)
-      console.log('called order:')
-      console.log(called)
-      console.log('*********************')
-    }
+    debug('created from: count')
+    debug(all)
+    debug('created order:')
+    debug(created)
+    debug('called order:')
+    debug(called)
+    debug('*********************')
     if(cb) cb(err, result)
     else if(err) throw err
-    else console.log(result)
+    else debug(result)
   }
 
   return async
@@ -162,13 +161,13 @@ if(!module.parent) {
   var async = create(Date.now())
 
   async(function () {
-    console.log(1)
+    debug(1)
   }) ()
   async(function () {
-    console.log(2)
+    debug(2)
   }) ()
   async(function () {
-    console.log(3)
+    debug(3)
   }) ()
 
 }

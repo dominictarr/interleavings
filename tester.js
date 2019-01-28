@@ -1,3 +1,4 @@
+const debug = require('debug')('interleavings')
 var create = require('./')
 var infer = require('infer-partial-order')
 
@@ -16,7 +17,7 @@ module.exports = function (test, cb) {
         console.error(err.stack)
         process.exit(1)
       }
-      else console.log(result || 'passed')
+      else debug(result || 'passed')
     })
   }
 
@@ -76,7 +77,7 @@ module.exports = function (test, cb) {
                   return messages[b].length - messages[a].length
                 }).slice(0, 5)
 
-    console.log(outcomes)
+    debug(outcomes)
 
     function min(ary, get) {
       var m = Infinity, _m, v
@@ -113,9 +114,9 @@ module.exports = function (test, cb) {
           }
         })
 
-    console.log(JSON.stringify(worstErrors, null, 2))
+    debug(JSON.stringify(worstErrors, null, 2))
 
-    console.log(
+    debug(
       infer(messages[outcomes[0]]
         .map(function (e) { return e.called })
         , true))
@@ -135,7 +136,7 @@ module.exports = function (test, cb) {
       console.error(err.stack)
       process.exit(1)
     }
-    else console.log(stats)
+    else debug(stats)
   }
 }
 

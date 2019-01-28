@@ -1,3 +1,4 @@
+const debug = require('debug')('interleavings')
 
 var async = require('../')
 var pull = require('pull-stream')
@@ -16,7 +17,7 @@ var assert = require('assert')
 //        async(cb) (null, d*10)
 //      }),
 //      pull.collect(function (err, ary) {
-//        console.log(ary)
+//        debug(ary)
 //        assert.deepEqual(ary, [10,20,30,40,50,60,70])
 //        async.done()
 //      })
@@ -33,9 +34,9 @@ var assert = require('assert')
 //
 
 async.test(strange, function (err, results, stats) {
-    console.log(results)
+    debug(results)
     assert.equal(stats.failures, 0)
-    console.log('passed')
+    debug('passed')
   })
 
 function strange (async) {
@@ -57,13 +58,13 @@ function strange (async) {
       function (read) {
         return function (abort, cb) {
           read(abort, function (end, data) {
-            console.log(end, data)
+            debug(end, data)
             cb(end, data)
           })
         }
       },
       pull.collect(function (err, ary) {
-        console.log(ary)
+        debug(ary)
         var odd  = ary.filter(function (e) { return e % 2 })
         var even = ary.filter(function (e) { return !(e % 2) })
 

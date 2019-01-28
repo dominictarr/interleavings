@@ -8,6 +8,7 @@
     "url": "git://github.com/dominictarr/interleavings.git"
   },
   "dependencies": {
+    "debug": "^4.1.1",
     "infer-partial-order": "~0.1.1",
     "rng": "~0.2.2"
   },

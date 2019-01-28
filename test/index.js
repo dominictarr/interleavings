@@ -1,3 +1,4 @@
+const debug = require('debug')('interleavings')
 var assert = require('assert')
 var async = require('../')
 var tape = require('tape')
@@ -59,7 +60,7 @@ tape('calls-twice', function (t) {
       async.test(function (async) {
         simpleAsync(para.para2, async)
       }, function (err, _results, _stats) {
-        console.log(_stats)
+        debug(_stats)
         t.deepEqual(_stats, stats)
         t.deepEqual(_results, results)
         t.end()
