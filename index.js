@@ -138,13 +138,15 @@ var create = module.exports = function (seed, cb) {
       called: called
     }
 
-    console.log('created from: count')
-    console.log(all)
-    console.log('created order:')
-    console.log(created)
-    console.log('called order:')
-    console.log(called)
-    console.log('*********************')
+    if (process.env.DEBUG) {
+      console.log('created from: count')
+      console.log(all)
+      console.log('created order:')
+      console.log(created)
+      console.log('called order:')
+      console.log(called)
+      console.log('*********************')
+    }
     if(cb) cb(err, result)
     else if(err) throw err
     else console.log(result)
