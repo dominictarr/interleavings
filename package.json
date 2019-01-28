@@ -17,7 +17,7 @@
     "pull-many": "^1.0.6",
     "pull-merge": "^1.0.2",
     "pull-stream": "^3.3.0",
-    "tape": "~2.13.1"
+    "tape": "^4.9.2"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
